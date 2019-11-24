@@ -67,5 +67,17 @@ function display() {
                     message: "How many would you like to buy?"
                 }
             ])
+            .then(function(answer) {
+
+                connection.query("SELECT * FROM products", function (err, results) {
+                        if (err) throw err;
+                  },
+                  function(err) {
+                    if (err) throw err;
+                    console.log("Your auction was created successfully!");
+                    start();
+                  }
+                );
+              });
     }
 }

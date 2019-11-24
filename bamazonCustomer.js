@@ -40,4 +40,36 @@ connection.connect(function(err) {
         }
       });
   }
+
+  function display() {
+    connection.query("SELECT * FROM products", function(err, results) {
+        if (err) throw err;
+            for (var i = 0; i < results.length; i++) {
+                console.log("---------------")
+                console.log("ID number: " + results[i].id)
+                console.log("Product Name: " + results[i].product_name)
+                console.log("Price: $" + results[i].price)
+            }
+       
+        
+    })
+        // inquirer
+        //   .prompt({
+        //       name: "choice",
+        //       type: "rawlist",
+        //       choices: function() {
+        //         var choiceArray = [];
+        //         for (var i = 0; i < results.length; i++) {
+        //           choiceArray.push(results[i].item_name);
+        //         }
+        //         return choiceArray;
+        //       },
+        //       message: "Which product are you interested in?"
+        //     })
+        //     .then(function(answer) {
+        //         alert("hi!")
+                
+        //       });
+        //   });
+        }
   

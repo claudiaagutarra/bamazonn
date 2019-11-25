@@ -31,7 +31,6 @@ function start() {
             choices: ["Yes!", "No"]
         })
         .then(function (answer) {
-            // based on their answer, either call the bid or the post functions
             if (answer.display === "Yes!") {
                 display();
             }
@@ -61,12 +60,12 @@ function display() {
                     type: "input",
                     message: "If you would like to purchase a product, please input the product's ID number:"
                 }
-                // ,
-                // {
-                //     name: "quantity",
-                //     type: "input",
-                //     message: "How many would you like to buy?"
-                // }
+                ,
+                {
+                    name: "quantity",
+                    type: "input",
+                    message: "How many would you like to buy?"
+                }
             ])
             .then(function(answer) {
                 connection.query("SELECT * FROM products WHERE id = ?", 
@@ -76,7 +75,14 @@ function display() {
                   function(err, res) {
                     if (err) throw err;
                     var quantity = parseInt(res[0].stock_quantity)
-                    console.log(quantity)
+                    // console.log(quantity)
+                    if (quantity <= parseInt(answer.quantity)) {
+                        console.log("Insufficient quantity!")
+                    }
+                    else if (quantity >= parseInt(res[0].stock_quantity)) {
+                        var total = parseInt(res[0].price) * parseInt(answer.quantity)
+                        console.log("Your purchase was successful! Your total was $" + total + ". Thank you for shopping with us.")
+                    }
                   }
                 );
                 //   connection.query("SELECT * FROM products WHERE id = ?", 

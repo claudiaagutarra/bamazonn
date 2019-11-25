@@ -31,7 +31,7 @@ function mainMenu() {
             name: "menu",
             type: "list",
             message: "What would you like to do?",
-            choices: ["View Products for Sale", "View Low Inventory", "Add to Inventory", "Add New Product"]
+            choices: ["View Products for Sale", "View Low Inventory", "Add to Inventory", "Add New Product", "Cancel"]
         })
         .then(function (answer) {
             if (answer.menu === "View Products for Sale") {
@@ -46,6 +46,9 @@ function mainMenu() {
             else if (answer.menu === "Add New Product") {
                 addNewProduct();
             }
+            else if (answer.menu === "Cancel") {
+                connection.end();
+            }
         });
 }
 
@@ -59,5 +62,91 @@ function display() {
             console.log("Price: $" + results[i].price)
             console.log("Quantity: " + results[i].stock_quantity)
         }
+        mainMenu();
     })
+
+}
+function lowInventory() {
+    connection.query("SELECT * FROM products WHERE stock_quantity < 5",
+        function (err, results) {
+            if (err) throw err;
+            // if (results = 0) {
+            //     console.log("All inventory sufficiently stocked")
+            // }
+            console.log("---------------")
+            console.log("These are the items with an inventory count lower than five")
+            for (var i = 0; i < results.length; i++) {
+                console.log("---------------")
+                console.log("ID number: " + results[i].id)
+                console.log("Product Name: " + results[i].product_name)
+                console.log("Price: $" + results[i].price)
+                console.log("Quantity: " + results[i].stock_quantity)
+
+            }
+            mainMenu();
+        })
+
+}
+
+function addInventory() {
+    inquirer
+        .prompt([
+            {
+                name: "idchoice",
+                type: "input",
+                message: "Please enter the product's ID number:"
+            }
+            ,
+            {
+                name: "quantity",
+                type: "input",
+                message: "How many would you like to add?"
+            }
+        ])
+        .then(function (answer) {
+            connection.query("SELECT * FROM products WHERE id = ?",
+                [
+                    parseInt(answer.idchoice)
+                ],
+                function (err, res) {
+                    if (err) throw err;
+                    var quantity = parseInt(res[0].stock_quantity)
+                    var product = res[0].product_name
+                    var chosenID = parseInt(res[0].id)
+                    var updatedquantity = quantity + parseInt(answer.quantity)
+                    connection.query("UPDATE products SET ? WHERE ?",
+                        [
+                            {
+                                stock_quantity: updatedquantity
+                            },
+                            {
+                                id: chosenID
+                            }
+                        ],
+                        function (err, results) {
+                            if (err) throw err;
+                            console.log("---------------")
+                            console.log("Inventory was added successfully!")
+                            console.log("---------------")
+                        })
+                    connection.query("SELECT * FROM products WHERE id = ?",
+                        [
+                            parseInt(answer.idchoice)
+                        ],
+                        function (err, res) {
+                            if (err) throw err;
+                            console.log("Total number of " + product + "s now available: " + res[0].stock_quantity)
+                            console.log("---------------")
+                            console.log("---------------")
+                            mainMenu();
+                        })
+                }
+
+            );
+
+        });
+}
+
+function addNewProduct() {
+
 }

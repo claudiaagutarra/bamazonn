@@ -22,6 +22,7 @@ connection.connect(function (err) {
     start();
 });
 
+
 function start() {
     inquirer
         .prompt({
@@ -40,6 +41,23 @@ function start() {
         });
 }
 
+function doOver() {
+    inquirer
+        .prompt({
+            name: "none",
+            type: "list",
+            message: "Would you like to browse other products?",
+            choices: ["Yes!", "No"]
+        })
+        .then(function (answer) {
+            if (answer.none === "Yes!") {
+                display();
+            }
+            else if (answer.none === "No") {
+                connection.end();
+            }
+        });
+}
 function display() {
     connection.query("SELECT * FROM products", function (err, results) {
         if (err) throw err;
@@ -75,9 +93,9 @@ function display() {
                   function(err, res) {
                     if (err) throw err;
                     var quantity = parseInt(res[0].stock_quantity)
-                    // console.log(quantity)
                     if (quantity <= parseInt(answer.quantity)) {
                         console.log("Insufficient quantity!")
+                        doOver();
                     }
                     else if (quantity >= parseInt(res[0].stock_quantity)) {
                         var chosenID = parseInt(res[0].id)
@@ -95,9 +113,17 @@ function display() {
                          function (err, results) {
                             if (err) throw err;
                         })
-                        console.log("Your purchase was successful! Your total was $" + totalprice + ". Thank you for shopping with us.")
-                        console.log(res[0].stock_quantity)
-                        start();
+                        console.log("---------------")
+                        console.log("Your purchase was successful!")
+                        console.log("---------------")
+                        console.log("Your total was $" + totalprice + ".")
+                        console.log("Thank you for shopping with us.")
+                        console.log("---------------")
+                        console.log(res[0].product_name + "s left: " + res[0].stock_quantity)
+                        console.log("---------------")
+                        console.log("---------------")
+                        console.log("---------------")
+                        doOver();
                     }
                   }
                 );

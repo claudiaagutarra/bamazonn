@@ -81,7 +81,6 @@ function lowInventory() {
                 console.log("Product Name: " + results[i].product_name)
                 console.log("Price: $" + results[i].price)
                 console.log("Quantity: " + results[i].stock_quantity)
-
             }
             mainMenu();
         })
@@ -148,5 +147,54 @@ function addInventory() {
 }
 
 function addNewProduct() {
+    inquirer
+        .prompt([
+            {
+                name: "newproductname",
+                type: "input",
+                message: "Please enter the name of the new product you'd like to add: "
+            }
+            ,
+            {
+                name: "dept",
+                type: "input",
+                message: "What department does it fall under? (Ex: Alexa, Beauty, Electronics, Furniture)"
 
+                // department_name, price, stock_quantity)
+            }
+            ,
+            {
+                name: "newprice",
+                type: "input",
+                message: "Please enter the price of the new product: "
+            }
+            ,
+            {
+                name: "newquantity",
+                type: "input",
+                message: "Please enter the quantity of the new product: "
+            }
+        ])
+        .then(function (answer) {
+            const newproduct = { product_name: answer.newproductname, department_name: answer.dept, price: parseInt(answer.newprice), stock_quantity: parseInt(answer.newquantity) };
+            connection.query('INSERT INTO products SET ?', newproduct, (err, res) => {
+                if(err) throw err;
+                var newitemID = res.insertId;
+                console.log("Item Added Successfully!");
+              });
+            // connection.query("SELECT * FROM products WHERE product_name = ?",
+            //   [
+            //       answer.newproductname
+            //   ],
+            //   function (err, res) {
+            //       if (err) throw err;
+            //       console.log("---------------")
+            //       console.log("ID number: " + results[0].id)
+            //       console.log("Product Name: " + results[0].product_name)
+            //       console.log("Price: $" + results[0].price)
+            //       console.log("Quantity: " + results[0].stock_quantity)
+            //   })
+        
+
+})
 }

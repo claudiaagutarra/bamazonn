@@ -70,19 +70,26 @@ function lowInventory() {
     connection.query("SELECT * FROM products WHERE stock_quantity < 5",
         function (err, results) {
             if (err) throw err;
-            // if (results = 0) {
-            //     console.log("All inventory sufficiently stocked")
-            // }
-            console.log("---------------")
-            console.log("These are the items with an inventory count lower than five")
-            for (var i = 0; i < results.length; i++) {
+            if (results.length === 0) {
                 console.log("---------------")
-                console.log("ID number: " + results[i].id)
-                console.log("Product Name: " + results[i].product_name)
-                console.log("Price: $" + results[i].price)
-                console.log("Quantity: " + results[i].stock_quantity)
+                console.log("All products are sufficiently stocked!")
+                console.log("---------------")
+                confirmReturnMenu();
             }
-            mainMenu();
+            else {
+                console.log("---------------")
+                console.log("These are the items with an inventory count lower than five")
+                for (var i = 0; i < results.length; i++) {
+                    console.log("---------------")
+                    console.log("ID number: " + results[i].id)
+                    console.log("Product Name: " + results[i].product_name)
+                    console.log("Price: $" + results[i].price)
+                    console.log("Quantity: " + results[i].stock_quantity)
+                    onsole.log("---------------")
+                }
+
+                confirmReturnMenu();
+            }
         })
 
 }
@@ -137,7 +144,7 @@ function addInventory() {
                             console.log("Total number of " + product + "s now available: " + res[0].stock_quantity)
                             console.log("---------------")
                             console.log("---------------")
-                            mainMenu();
+                            confirmReturnMenu();
                         })
                 }
 
@@ -159,8 +166,6 @@ function addNewProduct() {
                 name: "dept",
                 type: "input",
                 message: "What department does it fall under? (Ex: Alexa, Beauty, Electronics, Furniture)"
-
-                // department_name, price, stock_quantity)
             }
             ,
             {
@@ -178,23 +183,45 @@ function addNewProduct() {
         .then(function (answer) {
             const newproduct = { product_name: answer.newproductname, department_name: answer.dept, price: parseInt(answer.newprice), stock_quantity: parseInt(answer.newquantity) };
             connection.query('INSERT INTO products SET ?', newproduct, (err, res) => {
-                if(err) throw err;
+                if (err) throw err;
                 var newitemID = res.insertId;
-                console.log("Item Added Successfully!");
-              });
-            // connection.query("SELECT * FROM products WHERE product_name = ?",
-            //   [
-            //       answer.newproductname
-            //   ],
-            //   function (err, res) {
-            //       if (err) throw err;
-            //       console.log("---------------")
-            //       console.log("ID number: " + results[0].id)
-            //       console.log("Product Name: " + results[0].product_name)
-            //       console.log("Price: $" + results[0].price)
-            //       console.log("Quantity: " + results[0].stock_quantity)
-            //   })
-        
+                console.log("Item Added Successfully! ID of new product: " + newitemID);
+            });
+            connection.query("SELECT * FROM products WHERE product_name = ?",
+                [
+                    answer.newproductname
+                ],
+                function (err, res) {
+                    if (err) throw err;
+                    console.log("---------------")
+                    console.log("Details for New Product")
+                    console.log("---------------")
+                    console.log("ID number: " + res[0].id)
+                    console.log("Product Name: " + res[0].product_name)
+                    console.log("Price: $" + res[0].price)
+                    console.log("Quantity: " + res[0].stock_quantity)
+                    console.log("---------------")
+                    confirmReturnMenu();
+                })
 
-})
+        })
+
+}
+
+function confirmReturnMenu() {
+    inquirer
+        .prompt({
+            name: "confirmMenu",
+            type: "list",
+            message: "Would you like to go back to the main menu?",
+            choices: ["Yes!", "No"]
+        })
+        .then(function (answer) {
+            if (answer.confirmMenu === "Yes!") {
+                mainMenu();
+            }
+            else if (answer.confirmMenu === "No") {
+                connection.end();
+            }
+        });
 }

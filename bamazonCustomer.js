@@ -85,49 +85,57 @@ function display() {
                     message: "How many would you like to buy?"
                 }
             ])
-            .then(function(answer) {
-                connection.query("SELECT * FROM products WHERE id = ?", 
-                [
-                    parseInt(answer.idchoice)
-                ],
-                  function(err, res) {
-                    if (err) throw err;
-                    var quantity = parseInt(res[0].stock_quantity)
-                    if (quantity <= parseInt(answer.quantity)) {
-                        console.log("Insufficient quantity!")
-                        doOver();
+            .then(function (answer) {
+                connection.query("SELECT * FROM products WHERE id = ?",
+                    [
+                        parseInt(answer.idchoice)
+                    ],
+                    function (err, res) {
+                        if (err) throw err;
+                        var quantity = parseInt(res[0].stock_quantity)
+                        if (quantity <= parseInt(answer.quantity)) {
+                            console.log("Insufficient quantity!")
+                            doOver();
+                        }
+                        else if (quantity >= parseInt(res[0].stock_quantity)) {
+                            var product = res[0].product_name 
+                            var chosenID = parseInt(res[0].id)
+                            var totalprice = parseInt(res[0].price) * parseInt(answer.quantity)
+                            var updatedquantity = parseInt(res[0].stock_quantity) - parseInt(answer.quantity)
+                            connection.query("UPDATE products SET ? WHERE ?",
+                                [
+                                    {
+                                        stock_quantity: updatedquantity
+                                    },
+                                    {
+                                        id: chosenID
+                                    }
+                                ],
+                                function (err, results) {
+                                    if (err) throw err;
+                                    console.log("---------------")
+                                    console.log("Your purchase was successful!")
+                                    console.log("---------------")
+                                    console.log("Your total was $" + totalprice + ".")
+                                    console.log("Thank you for shopping with us.")
+                                    console.log("---------------")
+                                })
+                                connection.query("SELECT * FROM products WHERE id = ?",
+                                [
+                                    parseInt(answer.idchoice)
+                                ],
+                                function (err, res) {
+                                    if (err) throw err;
+                                    console.log(product + "s left: " + res[0].stock_quantity)
+                                    console.log("---------------")
+                                    console.log("---------------")
+                                    console.log("---------------")
+                                    doOver();
+                                })
+                        }
                     }
-                    else if (quantity >= parseInt(res[0].stock_quantity)) {
-                        var chosenID = parseInt(res[0].id)
-                        var totalprice = parseInt(res[0].price) * parseInt(answer.quantity)
-                        var updatedquantity = parseInt(res[0].stock_quantity) - parseInt(answer.quantity)
-                        connection.query("UPDATE products SET ? WHERE ?",
-                        [
-                            {
-                              stock_quantity: updatedquantity
-                            },
-                            {
-                              id: chosenID
-                            }
-                        ],
-                         function (err, results) {
-                            if (err) throw err;
-                        })
-                        console.log("---------------")
-                        console.log("Your purchase was successful!")
-                        console.log("---------------")
-                        console.log("Your total was $" + totalprice + ".")
-                        console.log("Thank you for shopping with us.")
-                        console.log("---------------")
-                        console.log(res[0].product_name + "s left: " + res[0].stock_quantity)
-                        console.log("---------------")
-                        console.log("---------------")
-                        console.log("---------------")
-                        doOver();
-                    }
-                  }
                 );
 
-              });
+            });
     }
 }

@@ -80,20 +80,28 @@ function display() {
                         console.log("Insufficient quantity!")
                     }
                     else if (quantity >= parseInt(res[0].stock_quantity)) {
-                        var total = parseInt(res[0].price) * parseInt(answer.quantity)
-                        console.log("Your purchase was successful! Your total was $" + total + ". Thank you for shopping with us.")
+                        var chosenID = parseInt(res[0].id)
+                        var totalprice = parseInt(res[0].price) * parseInt(answer.quantity)
+                        var updatedquantity = parseInt(res[0].stock_quantity) - parseInt(answer.quantity)
+                        connection.query("UPDATE products SET ? WHERE ?",
+                        [
+                            {
+                              stock_quantity: updatedquantity
+                            },
+                            {
+                              id: chosenID
+                            }
+                        ],
+                         function (err, results) {
+                            if (err) throw err;
+                        })
+                        console.log("Your purchase was successful! Your total was $" + totalprice + ". Thank you for shopping with us.")
+                        console.log(res[0].stock_quantity)
+                        start();
                     }
                   }
                 );
-                //   connection.query("SELECT * FROM products WHERE id = ?", 
-                // [
-                //     parseInt(answer.idchoice)
-                // ],
-                //   function(err, res) {
-                //     if (err) throw err;
-                //     console.log(res)
-                //   }
-                // );
+
               });
     }
 }

@@ -60,24 +60,34 @@ function display() {
                     name: "idchoice",
                     type: "input",
                     message: "If you would like to purchase a product, please input the product's ID number:"
-                },
-                {
-                    name: "quantity",
-                    type: "input",
-                    message: "How many would you like to buy?"
                 }
+                // ,
+                // {
+                //     name: "quantity",
+                //     type: "input",
+                //     message: "How many would you like to buy?"
+                // }
             ])
             .then(function(answer) {
-
-                connection.query("SELECT * FROM products", function (err, results) {
-                        if (err) throw err;
-                  },
-                  function(err) {
+                connection.query("SELECT * FROM products WHERE id = ?", 
+                [
+                    parseInt(answer.idchoice)
+                ],
+                  function(err, res) {
                     if (err) throw err;
-                    console.log("Your auction was created successfully!");
-                    start();
+                    var quantity = parseInt(res[0].stock_quantity)
+                    console.log(quantity)
                   }
                 );
+                //   connection.query("SELECT * FROM products WHERE id = ?", 
+                // [
+                //     parseInt(answer.idchoice)
+                // ],
+                //   function(err, res) {
+                //     if (err) throw err;
+                //     console.log(res)
+                //   }
+                // );
               });
     }
 }

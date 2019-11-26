@@ -1,5 +1,7 @@
 
 <h1> Bamazon App </h1>
+<p> Welcome to my Bamazon app! This app is able to take in orders from customers and deplete stock from the store's inventory. </p>
+
 <h2> Here is how it works: </h2>
 <h3> BamazonCustomer </h3>
 
@@ -25,6 +27,14 @@
 <p> Lastly, the manager would be able to add a new product into the database: </p>
 
 ![](images/newproductbamazon2.gif)
+
+<h3> Technologies Used: </h3>
+* MySQL
+* Node
+     *Inquirer
+* Javascript
+
+
 
 
 

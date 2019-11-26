@@ -85,7 +85,7 @@ function lowInventory() {
                     console.log("Product Name: " + results[i].product_name)
                     console.log("Price: $" + results[i].price)
                     console.log("Quantity: " + results[i].stock_quantity)
-                    onsole.log("---------------")
+                    console.log("---------------")
                 }
 
                 confirmReturnMenu();

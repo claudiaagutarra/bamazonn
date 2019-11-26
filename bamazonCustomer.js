@@ -98,7 +98,7 @@ function display() {
                             doOver();
                         }
                         else if (quantity >= parseInt(res[0].stock_quantity)) {
-                            var product = res[0].product_name 
+                            var product = res[0].product_name
                             var chosenID = parseInt(res[0].id)
                             var totalprice = parseInt(res[0].price) * parseInt(answer.quantity)
                             var updatedquantity = parseInt(res[0].stock_quantity) - parseInt(answer.quantity)
@@ -120,7 +120,7 @@ function display() {
                                     console.log("Thank you for shopping with us.")
                                     console.log("---------------")
                                 })
-                                connection.query("SELECT * FROM products WHERE id = ?",
+                            connection.query("SELECT * FROM products WHERE id = ?",
                                 [
                                     parseInt(answer.idchoice)
                                 ],
